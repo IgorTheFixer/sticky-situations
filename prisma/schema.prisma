@@ -14,55 +14,56 @@ datasource db {
 }
 
 model Project {
-  id        Int       @id @default(autoincrement())
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  features  Feature[] // A project has many features
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  features    Feature[] // A project has many features
 }
 
 model Feature {
-  id          Int          @id @default(autoincrement())
+  id          String       @id @default(uuid())
   name        String
   description String?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  projectId   Int
+  projectId   String
   project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
   userStories UserStory[]  // A feature has many user stories
 }
 
 model UserStory {
-  id          Int     @id @default(autoincrement())
+  id          String   @id @default(uuid())
   title       String
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  featureId   Int
+  featureId   String
   feature     Feature  @relation(fields: [featureId], references: [id], onDelete: Cascade)
   tasks       Task[]   // A user story has many tasks
   bugs        Bug[]    // A user story has many bugs
 }
 
 model Task {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
   title       String
   description String?
   status      String   // E.g., "To Do", "In Progress", "Done"
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  userStoryId Int
+  userStoryId String
   userStory   UserStory @relation(fields: [userStoryId], references: [id], onDelete: Cascade)
 }
 
 model Bug {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
   title       String
   description String?
   priority    String   // E.g., "Low", "Medium", "High"
   status      String   // E.g., "Open", "Resolved", "Closed"
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  userStoryId Int
+  userStoryId String
   userStory   UserStory @relation(fields: [userStoryId], references: [id], onDelete: Cascade)
 }

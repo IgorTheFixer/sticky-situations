@@ -1,4 +1,7 @@
+'use client'
+
 import { Button } from "@/components/ui/button";
+import ProjectForm from "../components/ProjectForm"
 
 export default function Dashboard() {
   return (
@@ -8,6 +11,7 @@ export default function Dashboard() {
           <Button>
             Create New Project
           </Button>
+          <ProjectForm />
         </div>
       </div>
     </div>
