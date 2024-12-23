@@ -1,12 +1,16 @@
 "use client"
 
 import * as z from "zod"
+import axios from "axios"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { toast } from "react-hot-toast"
 import { Project } from "@prisma/client"
 import { Textarea } from "@/components/ui/textarea"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -20,6 +24,7 @@ interface ProjectFormProps {
 }
 
 export default function ProjectForm({initialData}: ProjectFormProps){
+  const router = useRouter();
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(formSchema),
@@ -28,9 +33,23 @@ export default function ProjectForm({initialData}: ProjectFormProps){
       description:"",
     }
   })
+
+  const onSubmit = async (data: ProjectFormValues) => {
+    console.log(data)
+    try {
+      const response = await axios.post(`/api/projects`, data);
+      const newProject = response.data
+      router.refresh();
+      router.push(`/projects/${newProject.id}`);
+      toast.success("Project created!");
+    } catch (error: any) {
+      toast.error('Something went wrong.');
+    }
+  }
+
   return(
     <Form {...form}>
-      <form>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="name"
@@ -49,14 +68,17 @@ export default function ProjectForm({initialData}: ProjectFormProps){
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Project Name</FormLabel>
+              <FormLabel>Project Description</FormLabel>
               <FormControl>
-                <Textarea placeholder="Describe your Project here." />
+                <Textarea placeholder="Describe your Project here." {...field}/>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        <Button type="submit">
+          Submit
+        </Button>
       </form>
 
     </Form>
