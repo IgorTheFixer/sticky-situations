@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from "@/components/ui/button";
 import prismadb from "@/lib/prismadb";
 import axios from "axios";
 import { useParams } from "next/navigation"
@@ -32,6 +33,7 @@ export default function SingleProjectPage(){
     }
   }, [params.projectId])
 
+
   if (!project) {
     return <div>Project not found or does not exist.</div>;
   }
@@ -41,6 +43,9 @@ export default function SingleProjectPage(){
       project page
       <h1>{project.name}</h1>
       <p>{project.description}</p>
+      <Button>
+        Add New Feature
+      </Button>
     </div>
   )
 }
