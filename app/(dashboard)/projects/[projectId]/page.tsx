@@ -33,7 +33,7 @@ export default function SingleProjectPage(){
     }
   }, [params.projectId])
 
-
+//TODO: Use a loading page instead of this?
   if (!project) {
     return <div>Project not found or does not exist.</div>;
   }
