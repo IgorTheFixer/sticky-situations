@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ToastProvider />
-        <ModalProvider initialData={null}/>
+        <ModalProvider/>
         {children}
       </body>
     </html>

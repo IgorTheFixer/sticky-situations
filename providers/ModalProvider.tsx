@@ -2,15 +2,18 @@
 
 import { useEffect, useState } from "react"
 import { Project } from "@prisma/client"
+import { useModal } from "@/hooks/useModal";
 
 import ProjectForm from "@/app/components/ProjectForm";
 
-interface ModalProviderProps {
-  initialData: Project | null
-}
+// interface ModalProviderProps {
+//   initialData: Project | null
+// }
 
 //TODO: will need to type props for initial project and ModalType 
-export const ModalProvider = ({initialData}: ModalProviderProps) =>{
+export const ModalProvider = (
+  // {initialData}: ModalProviderProps
+) =>{
   //Prevents bad hydration of component
   const [isMounted, setIsMounted] = useState(false);
 
@@ -23,7 +26,7 @@ export const ModalProvider = ({initialData}: ModalProviderProps) =>{
   }
 
   return (
-    <ProjectForm initialData={initialData}/>
+    <ProjectForm />
   )
 }
 

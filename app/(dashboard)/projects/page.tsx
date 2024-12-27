@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import prismadb from "@/lib/prismadb";
+import { ProjectRow } from "./components/ProjectRow";
 
 //TODO: Add CRUD functionality to the rendered list of Projects
 //TODO: Remove unnecessary code
@@ -10,11 +10,10 @@ export default async function Projects() {
     // <li>
     //   {project.name}: {project.description}
     // </li>
-      <tr>
-        <td>{project.name}</td>
-        <td>{project.description}</td>
-        <td><Button>Edit</Button></td>
-      </tr>
+      <ProjectRow
+        key={project.id}
+        initialData={project}
+      />
     )
   })
   return (

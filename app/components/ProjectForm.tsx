@@ -13,48 +13,67 @@ import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from "next/navigation"
 import { Modal } from "@/components/ui/modal"
 import { useModal } from "@/hooks/useModal";
+import { useEffect, useState} from 'react'
 
 const formSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().min(10)
+  id: z.ostring(),
+  name: z.string().min(1, "Project name is required."),
+  description: z.string().min(10, "Description must be at least 10 characters.")
 })
 
 type ProjectFormValues = z.infer<typeof formSchema>
 
-interface ProjectFormProps {
-  initialData: Project | null;
-}
-
-export default function ProjectForm({initialData}: ProjectFormProps){
+export default function ProjectForm(){
   const router = useRouter();
   const modal = useModal()
+  const initialData = modal.initialData
+  const toastMessage = initialData ? "Project updated" : "Project created!"
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
-      name: "",
-      description:"",
+    defaultValues: {
+      name: initialData?.name || "",
+      description: initialData?.description || "",
+    },
+  });
+
+  useEffect(() => {
+    if (modal.initialData) {
+      form.reset({
+        name: modal.initialData.name,
+        description: modal.initialData.description,
+      });
     }
-  })
+  }, [modal.initialData, form]);
 
   const onSubmit = async (data: ProjectFormValues) => {
     console.log(data)
     try {
+      if (initialData){
+        await axios.patch(`/api/projects/${initialData.id}`, data)
+        router.refresh()
+      } else {
+        const response = await axios.post(`/api/projects`, data);
+        const newProject = response.data
+        router.push(`/projects/${newProject.id}`);
+      }
+      toast.success(toastMessage);
       modal.onClose()
-      const response = await axios.post(`/api/projects`, data);
-      const newProject = response.data
-      router.refresh();
-      router.push(`/projects/${newProject.id}`);
-      toast.success("Project created!");
     } catch (error: any) {
       toast.error('Something went wrong.');
     }
   }
 
+  const title = initialData ? 'Edit Project' : 'Create Project'
+  const description = initialData ? `Edit your Project's Description` : "Create a description for your new Project"
+  const namePlaceholder = 'Project Name'
+  const descriptionPlaceholder = "Describe your Project here."
+  console.log(initialData)
+
   return(
     <Modal
-      title= "Create Project"
-      description="Create a description for your new Project"
+      title= {title}
+      description={description}
       isOpen={modal.isOpen}
       onClose={modal.onClose}
     >
@@ -67,7 +86,7 @@ export default function ProjectForm({initialData}: ProjectFormProps){
               <FormItem>
                 <FormLabel>Project Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Project Name" {...field}/>
+                  <Input placeholder={namePlaceholder} {...field}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -80,7 +99,7 @@ export default function ProjectForm({initialData}: ProjectFormProps){
               <FormItem>
                 <FormLabel>Project Description</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Describe your Project here." {...field}/>
+                  <Textarea placeholder={descriptionPlaceholder} {...field}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
