@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type ModalType = "project" | null
+type ModalType = "project" | "feature" | null
 
 interface ModalStore {
   isOpen: boolean;

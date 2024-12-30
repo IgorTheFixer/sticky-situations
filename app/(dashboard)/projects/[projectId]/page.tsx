@@ -5,6 +5,7 @@ import prismadb from "@/lib/prismadb";
 import axios from "axios";
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react";
+import { useModal } from "@/hooks/useModal";
 
 interface Project {
   id: string;
@@ -17,7 +18,7 @@ export default function SingleProjectPage(){
   const params = useParams()
   const [project, setProject] = useState<Project | null>(null);
   const [error, setError] = useState<string | null>(null);
-  console.log(params)
+  const modal = useModal()
 
   useEffect(()=>{
     if(params.projectId){
@@ -39,11 +40,15 @@ export default function SingleProjectPage(){
   }
 
   return(
-    <div>
+    <div className="flex flex-col h-full w-full justify-center items-center">
       project page
       <h1>{project.name}</h1>
       <p>{project.description}</p>
-      <Button>
+      <Button
+        onClick={()=>{
+          modal.onOpen("feature")
+        }}
+      >
         Add New Feature
       </Button>
     </div>
