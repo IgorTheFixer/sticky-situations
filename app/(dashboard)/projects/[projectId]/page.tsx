@@ -6,12 +6,10 @@ import axios from "axios";
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react";
 import { useModal } from "@/hooks/useModal";
+import { Project as PrismaProject, Feature } from "@prisma/client";
 
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  features: { id: string; name: string }[];
+interface Project extends PrismaProject {
+  features: Feature[]; // Include the features relation
 }
 
 export default function SingleProjectPage(){
@@ -34,6 +32,10 @@ export default function SingleProjectPage(){
     }
   }, [params.projectId])
 
+  const featuresList = project?.features.map((feature)=>{
+    return <li key={feature.id}>{feature.name}: {feature.description}</li>
+  })
+
 //TODO: Use a loading page instead of this?
   if (!project) {
     return <div>Project not found or does not exist.</div>;
@@ -51,6 +53,9 @@ export default function SingleProjectPage(){
       >
         Add New Feature
       </Button>
+        <ul>
+          {featuresList}
+        </ul>
     </div>
   )
 }

@@ -10,26 +10,27 @@ import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Project } from "@prisma/client"
 import { Textarea } from "@/components/ui/textarea"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { Modal } from "@/components/ui/modal"
 import { useModal } from "@/hooks/useModal";
 import { useEffect, useState} from 'react'
 
 const formSchema = z.object({
   id: z.ostring(),
-  name: z.string().min(1, "Project name is required."),
-  description: z.string().min(10, "Description must be at least 10 characters.")
+  name: z.string().min(1, "Feature name is required."),
+  description: z.string().min(5, "Description must be at least 5 characters.")
 })
 
-type ProjectFormValues = z.infer<typeof formSchema>
+type FeatureFormValues = z.infer<typeof formSchema>
 
 export default function FeatureForm(){
   const router = useRouter();
+  const params = useParams()
   const modal = useModal()
   const initialData = modal.initialData
-  const toastMessage = initialData ? "Project updated" : "Project created!"
+  const toastMessage = initialData ? "Feature updated" : "Feature created!"
 
-  const form = useForm<ProjectFormValues>({
+  const form = useForm<FeatureFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: initialData?.name || "",
@@ -46,16 +47,17 @@ export default function FeatureForm(){
     }
   }, [modal.initialData, form]);
 
-  const onSubmit = async (data: ProjectFormValues) => {
+  const onSubmit = async (data: FeatureFormValues) => {
     console.log(data)
     try {
       if (initialData){
         await axios.patch(`/api/projects/${initialData.id}`, data)
         router.refresh()
       } else {
-        const response = await axios.post(`/api/projects`, data);
-        const newProject = response.data
-        router.push(`/projects/${newProject.id}`);
+        // const response = 
+        await axios.post(`/api/features/${params.projectId}`, data);
+        // const newProject = response.data
+        // router.push(`/projects/${newProject.id}`);
       }
       toast.success(toastMessage);
       modal.onClose()
@@ -64,11 +66,11 @@ export default function FeatureForm(){
     }
   }
 
-  const title = initialData ? 'Edit Project' : 'Create Project'
-  const description = initialData ? `Edit your Project's Description` : "Create a description for your new Project"
-  const namePlaceholder = 'Project Name'
-  const descriptionPlaceholder = "Describe your Project here."
-  console.log(initialData)
+  const title = initialData ? 'Edit Feature' : 'Create Feature'
+  const description = initialData ? `Edit your Feature's Description` : "Create a description for your new Feature"
+  const namePlaceholder = 'Feature Name'
+  const descriptionPlaceholder = "Describe your Feature here."
+  console.log(params)
 
   return(
     <Modal
@@ -85,7 +87,7 @@ export default function FeatureForm(){
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Project Name</FormLabel>
+                <FormLabel>Feature Name</FormLabel>
                 <FormControl>
                   <Input placeholder={namePlaceholder} {...field}/>
                 </FormControl>
@@ -98,7 +100,7 @@ export default function FeatureForm(){
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Project Description</FormLabel>
+                <FormLabel>Feature Description</FormLabel>
                 <FormControl>
                   <Textarea placeholder={descriptionPlaceholder} {...field}/>
                 </FormControl>
