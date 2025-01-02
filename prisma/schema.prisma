@@ -33,6 +33,12 @@ model Feature {
   userStories UserStory[]  // A feature has many user stories
 }
 
+enum UserStoryStatus {
+  NEW
+  OPEN
+  CLOSED
+}
+
 model UserStory {
   id          String   @id @default(uuid())
   title       String
@@ -40,6 +46,7 @@ model UserStory {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   featureId   String
+  status      UserStoryStatus @default(NEW) // Default status is "new"
   feature     Feature  @relation(fields: [featureId], references: [id], onDelete: Cascade)
   tasks       Task[]   // A user story has many tasks
   bugs        Bug[]    // A user story has many bugs
