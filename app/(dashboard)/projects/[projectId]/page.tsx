@@ -6,6 +6,7 @@ import axios from "axios";
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react";
 import { useModal } from "@/hooks/useModal";
+import { useFeatures } from "@/hooks/useFeatures";
 import { Project as PrismaProject, Feature } from "@prisma/client";
 
 interface Project extends PrismaProject {
@@ -14,6 +15,8 @@ interface Project extends PrismaProject {
 
 export default function SingleProjectPage(){
   const params = useParams()
+  const setFeatures = useFeatures((state) => state.setFeatures)
+  const features = useFeatures((state) => state.features);
   const [project, setProject] = useState<Project | null>(null);
   const [error, setError] = useState<string | null>(null);
   const modal = useModal()
@@ -24,15 +27,16 @@ export default function SingleProjectPage(){
         try {
           const response = await axios.get(`/api/projects/${params.projectId}`)
           setProject(response.data);
+          setFeatures(response.data.features)
         } catch (error) {
           setError("Failed to load project data")
         }
       }
       fetchProject()
     }
-  }, [params.projectId])
+  }, [params.projectId, setFeatures])
 
-  const featuresList = project?.features.map((feature)=>{
+  const featuresList = features.map((feature)=>{
     return <li key={feature.id}>{feature.name}: {feature.description}</li>
   })
 

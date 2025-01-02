@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useRouter, useParams } from "next/navigation"
 import { Modal } from "@/components/ui/modal"
 import { useModal } from "@/hooks/useModal";
+import { useFeatures } from "@/hooks/useFeatures";
 import { useEffect, useState} from 'react'
 
 const formSchema = z.object({
@@ -27,6 +28,7 @@ export default function FeatureForm(){
   const router = useRouter();
   const params = useParams()
   const modal = useModal()
+  const addFeature = useFeatures((state) => state.addFeature);
   const initialData = modal.initialData
   const toastMessage = initialData ? "Feature updated" : "Feature created!"
 
@@ -54,8 +56,9 @@ export default function FeatureForm(){
         await axios.patch(`/api/projects/${initialData.id}`, data)
         router.refresh()
       } else {
-        // const response = 
-        await axios.post(`/api/features/${params.projectId}`, data);
+        const response = await axios.post(`/api/features/${params.projectId}`, data);
+        const newFeature = response.data
+        addFeature(newFeature)
         // const newProject = response.data
         // router.push(`/projects/${newProject.id}`);
       }
