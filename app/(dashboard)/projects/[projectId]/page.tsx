@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useModal } from "@/hooks/useModal";
 import { useFeatures } from "@/hooks/useFeatures";
 import { Project as PrismaProject, Feature } from "@prisma/client";
+import { Fragment } from "react";
 
 interface Project extends PrismaProject {
   features: Feature[]; // Include the features relation
@@ -45,21 +46,46 @@ export default function SingleProjectPage(){
     return <div>Project not found or does not exist.</div>;
   }
 
+  const columns = ["New", "Active", "Close"]; // Example column headers
+  
   return(
-    <div className="flex flex-col h-full w-full justify-center items-center">
-      project page
-      <h1>{project.name}</h1>
-      <p>{project.description}</p>
-      <Button
-        onClick={()=>{
-          modal.onOpen("feature")
-        }}
-      >
-        Add New Feature
-      </Button>
-        <ul>
-          {featuresList}
-        </ul>
-    </div>
+    <>
+      <div className="flex flex-col h-full w-full justify-center items-center">
+        project page
+        <h1>{project.name}</h1>
+        <p>{project.description}</p>
+        <Button
+          onClick={()=>{
+            modal.onOpen("feature")
+          }}
+        >
+          Add New Feature
+        </Button>
+          <ul>
+            {featuresList}
+          </ul>
+      </div>
+       <div className="grid grid-cols-[1fr_repeat(3,minmax(200px,1fr))] gap-4 w-full border-2 border-red-500">
+      {/* Header Row */}
+      <div className="border-2 border-red-500"></div> {/* Empty cell for the first column */}
+      {columns.map((column) => (
+        <div key={column} className="text-center font-bold border-b pb-2 border-2 border-red-500">
+          {column}
+        </div>
+      ))}
+
+      {/* Feature Rows */}
+      {features.map((feature) => (
+        <Fragment key={feature.id}>
+          {/* Feature Name */}
+          <div className="font-semibold border-r pr-2">{feature.name}</div>
+          {/* Empty Cells for Columns */}
+          {columns.map((column, index) => (
+            <div key={index} className="border p-2 bg-gray-50 h-16"></div>
+          ))}
+        </Fragment>
+      ))}
+      </div>
+    </>
   )
 }
