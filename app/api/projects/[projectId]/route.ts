@@ -8,7 +8,11 @@ export async function GET(req: Request, { params }: { params: { projectId: strin
       id: params.projectId,
     },
     include: {
-      features: true, // Include related features
+      features: {
+        include: {
+          userStories: true
+        }
+      }
     },
   });
 

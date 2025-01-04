@@ -7,11 +7,11 @@ import { useParams } from "next/navigation"
 import { useEffect, useState } from "react";
 import { useModal } from "@/hooks/useModal";
 import { useFeatures } from "@/hooks/useFeatures";
-import { Project as PrismaProject, Feature } from "@prisma/client";
+import { Project as PrismaProject, Feature, UserStory } from "@prisma/client";
 import { Fragment } from "react";
 
 interface Project extends PrismaProject {
-  features: Feature[]; // Include the features relation
+  features: (Feature & { userStories: UserStory[] })[]; // Include user stories
 }
 
 export default function SingleProjectPage(){
@@ -81,7 +81,15 @@ export default function SingleProjectPage(){
           <div className="font-semibold border-r pr-2">{feature.name}</div>
           {/* Empty Cells for Columns */}
           {columns.map((column, index) => (
-            <div key={index} className="border p-2 bg-gray-50 h-16"></div>
+            <div key={`${feature.id}-${column}`} className="border p-2 bg-gray-50 h-16">
+              {feature.userStories
+                .filter((story) => story.status === column.toLowerCase())
+                .map((userStory) => (
+                  <div key={userStory.id} className="bg-white p-2 rounded-md">
+                    {userStory.title}
+                  </div>
+                ))}
+            </div>
           ))}
         </Fragment>
       ))}
