@@ -6,6 +6,7 @@ import { useModal } from "@/hooks/useModal";
 
 import ProjectForm from "@/app/components/ProjectForm";
 import FeatureForm from "@/app/components/FeatureForm";
+import UserStoryForm from "@/app/components/UserStoryForm";
 
 // interface ModalProviderProps {
 //   initialData: Project | null
@@ -23,6 +24,7 @@ export const ModalProvider = (
   }, []);
 
   const modal = useModal()
+  const featureId = modal.featureId
 
   if (!isMounted) {
     return null
@@ -34,6 +36,10 @@ export const ModalProvider = (
 
   if (modal.modalType === "feature") {
     return <FeatureForm />;
+  }
+
+  if (modal.modalType === "user story") {
+    return <UserStoryForm featureId={featureId}/>;
   }
 }
 

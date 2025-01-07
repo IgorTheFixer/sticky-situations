@@ -9,6 +9,8 @@ import { useModal } from "@/hooks/useModal";
 import { useFeatures } from "@/hooks/useFeatures";
 import { Project as PrismaProject, Feature } from "@prisma/client";
 import { Fragment } from "react";
+import { PlusIcon } from "lucide-react";
+import { useStories } from "@/hooks/useStories";
 
 interface Project extends PrismaProject {
   features: Feature[]; // Include the features relation
@@ -18,6 +20,7 @@ export default function SingleProjectPage(){
   const params = useParams()
   const setFeatures = useFeatures((state) => state.setFeatures)
   const features = useFeatures((state) => state.features);
+  const userStories = useStories((state) => state.userStories)
   const [project, setProject] = useState<Project | null>(null);
   const [error, setError] = useState<string | null>(null);
   const modal = useModal()
@@ -46,7 +49,7 @@ export default function SingleProjectPage(){
     return <div>Project not found or does not exist.</div>;
   }
 
-  const columns = ["New", "Active", "Close"]; // Example column headers
+  const columns = ["NEW", "OPEN", "CLOSE"]; // Example column headers
   
   return(
     <>
@@ -78,10 +81,31 @@ export default function SingleProjectPage(){
       {features.map((feature) => (
         <Fragment key={feature.id}>
           {/* Feature Name */}
-          <div className="font-semibold border-r pr-2">{feature.name}</div>
+          <div className="font-semibold border-r pr-2">
+            {feature.name}
+            <Button size={"icon"}
+              onClick={()=>{
+                modal.onOpen("user story", null, feature.id)
+              }}
+            >
+              <PlusIcon/>
+            </Button>
+          </div>
           {/* Empty Cells for Columns */}
           {columns.map((column, index) => (
-            <div key={index} className="border p-2 bg-gray-50 h-16"></div>
+            <div key={index} className="border p-2 bg-gray-50 h-16">
+                {/* Filter user stories for the current feature and column */}
+                {userStories
+                 .filter((story) => {
+                  const matchesFeature = story.featureId === feature.id;
+                  const matchesStatus = story.status === column;
+                  console.log('Matching user story:', story.featureId, feature.id, story.status, column);
+                  return matchesFeature && matchesStatus;
+                })
+                  .map((userStory) => (
+                    <div key={userStory.id}>{userStory.title}</div>
+                  ))}
+            </div>
           ))}
         </Fragment>
       ))}
