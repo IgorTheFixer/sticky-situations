@@ -62,6 +62,7 @@ export default function UserStoryForm({ featureId }: UserStoryFormProps){
       } else {
         const response = await axios.post(`/api/userStories/${featureId}`, data);
         const newStory = response.data
+        console.log("New Story",newStory)
         addStory(newStory)
         // const newProject = response.data
         // router.push(`/projects/${newProject.id}`);

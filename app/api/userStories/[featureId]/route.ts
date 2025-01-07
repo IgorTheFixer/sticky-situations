@@ -39,7 +39,8 @@ export async function POST(
         description,
         feature: {
           connect: {id: featureId}
-        }
+        },
+        status: "NEW"
       }
     });
   
