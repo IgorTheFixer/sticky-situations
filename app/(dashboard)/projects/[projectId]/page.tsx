@@ -93,7 +93,7 @@ export default function SingleProjectPage(){
           </div>
           {/* Empty Cells for Columns */}
           {columns.map((column, index) => (
-            <div key={index} className="border p-2 bg-gray-50 h-18">
+            <div key={index} className="border p-4 bg-gray-50 h-18">
                 {/* Filter user stories for the current feature and column */}
                 {userStories
                  .filter((story) => {
