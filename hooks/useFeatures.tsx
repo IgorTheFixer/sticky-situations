@@ -15,3 +15,5 @@ export const useFeatures = create<FeatureState>((set) => ({
       features: [...state.features, feature],
     })),
 }));
+
+console.log("test")
