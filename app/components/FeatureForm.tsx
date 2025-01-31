@@ -63,6 +63,7 @@ export default function FeatureForm(){
         // router.push(`/projects/${newProject.id}`);
       }
       toast.success(toastMessage);
+      console.log(toastMessage)
       modal.onClose()
     } catch (error: any) {
       toast.error('Something went wrong.');
